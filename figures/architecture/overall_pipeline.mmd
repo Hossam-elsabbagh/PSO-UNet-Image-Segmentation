@@ -1,0 +1,20 @@
+flowchart LR
+    A[Oxford-IIIT Pet] --> B[Official trainval and test splits]
+    B --> C[Resize, trimap conversion, valid mask]
+    C --> D[Train 2944 / validation 736]
+    B --> T[Held-out test 3669]
+    D --> E[Fixed hyperparameters]
+    E --> F[Fresh compact U-Net]
+    F --> G[8-epoch baseline training]
+    G --> H[Best validation-Dice checkpoint]
+    D --> I[PSO particles]
+    I --> J[Fresh U-Net per 2-epoch candidate]
+    J --> K[Validation Dice fitness]
+    K --> I
+    K --> L[Selected hyperparameters]
+    L --> M[Fresh 8-epoch final U-Net]
+    M --> N[Best validation-Dice checkpoint]
+    H --> O[One held-out test evaluation]
+    N --> O
+    T --> O
+    O --> P[Dice, IoU, runtime comparison]

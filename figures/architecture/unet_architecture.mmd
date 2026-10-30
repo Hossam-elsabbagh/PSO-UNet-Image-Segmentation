@@ -1,0 +1,23 @@
+flowchart LR
+    I[RGB 3 x 128 x 128] --> E1[DoubleConv 16]
+    E1 --> P1[MaxPool]
+    P1 --> E2[DoubleConv 32]
+    E2 --> P2[MaxPool]
+    P2 --> E3[DoubleConv 64]
+    E3 --> P3[MaxPool]
+    P3 --> E4[DoubleConv 128]
+    E4 --> P4[MaxPool]
+    P4 --> B[DoubleConv 256 + bottleneck dropout]
+    B --> U4[Upsample + skip E4]
+    E4 -.-> U4
+    U4 --> D4[DoubleConv 128]
+    D4 --> U3[Upsample + skip E3]
+    E3 -.-> U3
+    U3 --> D3[DoubleConv 64]
+    D3 --> U2[Upsample + skip E2]
+    E2 -.-> U2
+    U2 --> D2[DoubleConv 32]
+    D2 --> U1[Upsample + skip E1]
+    E1 -.-> U1
+    U1 --> D1[DoubleConv 16]
+    D1 --> O[1 x 1 convolution: 1 x 128 x 128 logits]

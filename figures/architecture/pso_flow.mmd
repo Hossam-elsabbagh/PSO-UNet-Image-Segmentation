@@ -1,0 +1,12 @@
+flowchart TD
+    A[Seeded particles in log LR, dropout, log weight decay] --> B[Decode and clamp to bounds]
+    B --> C[Initialize fresh compact U-Net]
+    C --> D[Train on train split for 2 epochs]
+    D --> E[Compute mean per-image validation Dice]
+    E --> F[Fitness = 1 - Dice]
+    F --> G[Update personal and global best]
+    G --> H{Rounds complete?}
+    H -- No --> I[Update velocity and position]
+    I --> B
+    H -- Yes --> J[Export best hyperparameters and search history]
+    J --> K[Initialize fresh U-Net for final 8-epoch training]

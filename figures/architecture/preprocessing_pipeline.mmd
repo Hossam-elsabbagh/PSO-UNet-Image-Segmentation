@@ -1,0 +1,10 @@
+flowchart LR
+    A[RGB image + trimap labels 1, 2, 3] --> B[Pair verification]
+    B --> C[Resize RGB bilinear to 128 x 128]
+    B --> D[Resize trimap nearest to 128 x 128]
+    C --> E[Convert RGB to float in 0 to 1]
+    D --> F[1 to foreground, 2 to background, 3 to ignore]
+    F --> G[Binary target + explicit valid-pixel mask]
+    E --> H[Joint horizontal flip p = 0.5 for training only]
+    G --> H
+    H --> I[Image, target, valid mask tensors]
