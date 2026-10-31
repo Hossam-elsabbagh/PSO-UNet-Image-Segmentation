@@ -1,76 +1,50 @@
 # Phase 1 Run Status
 
-**Verified on:** 31 October 2026 (Africa/Cairo); local experiments ran on 30 October.
+**Verified on:** 31 October 2026 (Africa/Cairo)
 
 **Project:** DSAI 403 Project 08, PSO-UNet-Image-Segmentation
 
-**Environment:** Windows, Python 3.11.9, PyTorch 2.5.1+cpu, torchvision 0.20.1+cpu, Intel Core i5-1135G7, 8 GB RAM, CUDA unavailable.
+**Environment:** Windows, Python 3.11.9, PyTorch 2.5.1+cpu, torchvision 0.20.1+cpu, Intel Core i5-1135G7, 8 GB RAM, no CUDA.
 
-This file distinguishes implemented code, local verification, and experiments that still need a practical training run. The named course guide `NIC_Project8_PSO_UNet_Arabic_English.pdf` was absent from the supplied workspace. The implementation follows the attached project brief; students must reconcile this draft with the official handout before submission.
+The complete Phase 1 baseline, PSO search, final model, and held-out comparison have run on the prepared Oxford-IIIT Pet dataset. The named course guide `NIC_Project8_PSO_UNet_Arabic_English.pdf` was not supplied, so the student team must still reconcile the report with the official handout and course AI-assistance rules.
 
-## Dataset provenance and preparation
+## Dataset and protocol
 
-The default `torchvision.datasets.OxfordIIITPet` download from the Oxford host timed out locally (`WinError 10060`). The optional `python -m scripts.prepare_dataset --mirror huggingface` path fetched the original two archives from [this mirror](https://huggingface.co/datasets/Shiym/ViT-FineTune/tree/main/oxford-iiit-pet), verified their MD5 values against Torchvision's official resource definitions, and extracted them under `data/raw/oxford-iiit-pet/`:
+The Oxford host timed out locally (`WinError 10060`). The original image and annotation archives were downloaded from [this mirror](https://huggingface.co/datasets/Shiym/ViT-FineTune/tree/main/oxford-iiit-pet) and verified against Torchvision's official MD5 values: `5c4f3ee8e5d25df40f4fd59a7f44e54c` and `95a8c909bbe2e81eed6a22bccdf3f68f`. Raw data and checkpoints remain local and are excluded from Git.
 
-| Archive | Verified MD5 |
+The fixed membership files record **2,944 training**, **736 validation**, and **3,669 official test** images, with zero split overlap. Both final models used seed 42, 128 × 128 inputs, batch size 16, the same compact U-Net, masked BCE plus soft Dice loss, AdamW, eight epochs, and best-validation-Dice checkpoint selection. The test split was accessed after both final configurations and checkpoints were fixed; it was not used for PSO fitness or model selection.
+
+## Completed measurements
+
+| Model and split | Best epoch / total | Mean Dice | Mean foreground IoU | Final training time | Search time |
+|---|---:|---:|---:|---:|---:|
+| Baseline, validation | 7 / 8 | 0.8017 | 0.6946 | 1,618.93 s | — |
+| PSO selected, validation | 8 / 8 | 0.8516 | 0.7667 | 1,766.50 s | 2,441.94 s |
+| Baseline, official test | 7 / 8 | 0.8084 | 0.7071 | 1,618.93 s | — |
+| PSO selected, official test | 8 / 8 | 0.8547 | 0.7733 | 1,766.50 s | 2,441.94 s |
+
+The PSO pilot completed **six** two-epoch candidate evaluations across three particles and two rounds. Its best candidate validation Dice was `0.7092`. The selected learning rate was `0.0010717589973807434`, bottleneck dropout `0.02825320436629486`, and weight decay `0.0008450201302139068`. Evaluation 5 repeated evaluation 2's best vector; no later candidate improved it. The final PSO model was initialized afresh and trained for the same eight-epoch budget as the baseline.
+
+On the 3,669-image held-out test split, the PSO-selected model gained **0.0462 Dice** and **0.0662 foreground IoU** over the baseline (4.62 and 6.62 percentage points). Both test passes processed 230 batches and 3,669 valid images with zero skipped batches. The PSO path took `4,208.44` seconds for search plus final training, **2.60 times** the baseline's `1,618.93` seconds. These are single-seed results, not a confidence interval or proof of a general advantage.
+
+The exact measurements are in `results/experiment_metadata.json`, `results/training_history.csv`, `results/pso_history.csv`, `results/pso_training_history.csv`, and `results/results.csv`. Corresponding plots and examples are in `figures/training_curves/` and `figures/predictions/`. Checkpoint SHA-256 values in metadata were checked against the local files before test evaluation.
+
+## Verification
+
+| Check | Status |
 |---|---|
-| `images.tar.gz` | `5c4f3ee8e5d25df40f4fd59a7f44e54c` |
-| `annotations.tar.gz` | `95a8c909bbe2e81eed6a22bccdf3f68f` |
+| Original archive checksums, image/mask pairing, and split non-overlap | Passed. |
+| Local CPU test suite | **40 passed** after the full experiment and documentation update. |
+| Full baseline | Eight history rows, completed metadata, and matching checkpoint hash verified. |
+| PSO search | Six candidate history rows and selected vector recorded. |
+| Full PSO final model | Eight history rows, completed metadata, matching search run ID, and checkpoint hash verified. |
+| Held-out evaluation | Both models evaluated on 3,669 images; four measured comparison rows generated. |
+| Notebook | Schema and syntax validated; selected cells executed locally. Full Colab notebook cells were not rerun because the shared CLI experiment was completed locally. |
+| Report PDF | Regenerated as **8 A4 pages** and visually inspected after the measured conclusions were added. |
+| GitHub Actions | CPU test workflow runs on push; check the latest commit's workflow result in GitHub Actions. |
 
-`python -m scripts.prepare_dataset --mirror huggingface` and a subsequent `--no-download` reuse run both passed. Image/trimap pairing and split non-overlap checks passed. The persisted split counts are **2,944 train**, **736 validation**, and **3,669 official test**; all pairwise intersections have size zero. `figures/dataset_samples/examples.png` was generated and visually checked. The held-out test split was used only to record its official membership, not for training, checkpoint selection, or PSO fitness.
+An exploratory local subset run was also rerun with **128 training / 64 validation images for two epochs**. Its best validation Dice was `0.2982` at epoch 1. It has a different budget and is excluded from the full comparison. The metadata keeps snapshots of two interrupted duplicate training/search launches; their partial compute time is excluded from the finalized run-time measurements above. A duplicate test evaluator was stopped before writing a result; no test score was used to tune either model.
 
-## Executed verification
+## Interpretation and remaining review
 
-| Check | Observed result |
-|---|---|
-| `python -m pytest -q` | **40 passed** on local CPU; no warnings on the final run. |
-| `python -m scripts.train_baseline --smoke` | One synthetic-data epoch completed; validation Dice `0.6713518317`. This is not an Oxford result. |
-| `python -m scripts.run_pso --smoke` | One synthetic candidate evaluation completed; validation Dice `0.6713518317`. This is not the configured six-evaluation pilot. |
-| Notebook schema and syntax | `nbformat.validate` passed; all 22 code cells parsed. |
-| Selected notebook cells | Environment, device, seed, real dataset preparation/exploration/split checks, trimap example, U-Net shape, loss, metrics, configuration, and PSO import executed locally. Full training cells remain to run in Colab. |
-| PDF render | `Phase1_Report.pdf` rendered as **6 A4 pages** and was visually inspected. |
-| `python -m scripts.generate_results` before full runs | Correctly declined to create `results.csv` without completed comparable final-model metadata. |
-
-## Measured preliminary Oxford subset
-
-`python -m scripts.preliminary_subset --no-download` trained for **one epoch** on **64 seeded training images** and evaluated **32 seeded validation images** drawn across the official development split. It selected its only epoch by validation Dice. The repeated run produced the same Dice and IoU, with a runtime difference expected from wall-clock measurement. This run is **not** the configured eight-epoch baseline and cannot be fairly compared with PSO.
-
-| Measurement | Value |
-|---|---:|
-| Training loss | 0.6679 |
-| Validation loss | 0.6503 |
-| Validation Dice | 0.5150169435 |
-| Validation foreground IoU | 0.3681280933 |
-| Completed epochs | 1 |
-| Training time | 9.06 s |
-| Device / seed | CPU / 42 |
-
-Evidence: `results/preliminary_history.csv`, `results/experiment_metadata.json`, `figures/training_curves/preliminary_subset_loss.png`, `figures/training_curves/preliminary_subset_validation_dice.png`, and `figures/predictions/preliminary_validation.png`. The local best checkpoint is excluded from Git. The displayed predictions are nearly all foreground, so the measured overlap does not indicate useful boundary quality.
-
-## Acceptance status
-
-| Component | Status | Evidence or remaining work |
-|---|---|---|
-| Environment and configuration | **PASS** | Python 3.11 virtual environment installed; `config.json` contains selected defaults; CPU fallback confirmed. |
-| Official dataset loading and split records | **PASS** | Checksummed original archives, torchvision loading, paired files, 2,944/736/3,669 split records, zero overlap. |
-| Preprocessing and augmentation | **PASS** | Synthetic tests and real sample figure verify dimensions, trimap mapping, ignored pixels, and joint flips. |
-| Compact U-Net | **PASS** | Forward/backward and gradient tests passed; notebook output `(1,1,128,128)` with 1,962,625 parameters. |
-| Masked losses and foreground metrics | **PASS** | Unit tests cover ignored pixels, zero-valid images/batches, overlap, empty foreground, and per-image aggregation. |
-| Baseline training code and smoke path | **PASS** | Shared loop, best-checkpoint rule, incremental CSV, and synthetic smoke run verified. |
-| Full eight-epoch Oxford baseline | **IMPLEMENTED, NOT EXECUTED** | Local CPU run would consume a substantial training budget; use Colab GPU or run `python -m scripts.train_baseline --no-download`. No full baseline score or checkpoint is claimed. |
-| PSO mechanics and candidate integration | **PASS** | Six-evaluation configuration, bounds/bests/determinism tests, and synthetic candidate run passed. |
-| Full PSO pilot and eight-epoch final model | **IMPLEMENTED, NOT EXECUTED** | Six two-epoch candidate runs plus eight final epochs remain; no selected hyperparameters or convergence curve are claimed. |
-| Preliminary real-data result | **PASS** | 64/32-image one-epoch measurements and figures above; explicitly non-comparable. |
-| Held-out test evaluation and final comparison | **IMPLEMENTED, NOT EXECUTED** | Script requires both completed, matching final runs and blocks repeated test evaluation. `results/results.csv` correctly remains absent. |
-| Google Colab notebook | **PASS** | 23 ordered sections, schema/syntax validation and selected local cells passed; full Colab experiment remains unexecuted. |
-| Technical report and diagrams | **PASS** | Markdown draft, visually checked six-page PDF, four Mermaid diagrams, real preliminary figures and student-review disclosure. |
-| GitHub Actions | **PASS** | [Push run 41126969467](https://github.com/Hossam-elsabbagh/PSO-UNet-Image-Segmentation/actions/runs/41126969467) completed successfully for implementation commit `3b7ec9b`; its CPU dependency and synthetic-test steps passed. |
-| Official course PDF review | **BLOCKED** | The named course PDF is absent; student must supply/review it and verify academic-integrity requirements. |
-| GitHub push and verification | **PASS** | Initial implementation commit `3b7ec9b05fb453660565948242a03db4bc810fac` was pushed to `main`; local HEAD and `git ls-remote origin refs/heads/main` matched. This status update is a follow-up documentation commit. |
-
-## Next steps
-
-1. Run the full eight-epoch baseline on the prepared dataset, preferably with a GPU.
-2. Run the configured six-evaluation PSO pilot and fresh eight-epoch final model.
-3. Evaluate both finalized checkpoints once on the held-out test set, then generate `results/results.csv` and comparison figures.
-4. Review and revise the academic report against the missing course guide and the course's AI-assistance policy.
+The selected settings improved both validation and test means in this run, at substantial search cost. Example masks still show over-segmentation and missed fine boundaries. The small six-evaluation search repeated one vector and cannot establish a global optimum; one random seed does not measure run-to-run variation. Repeating the complete protocol across seeds would test reliability. The official course handout remains unavailable for final student review.

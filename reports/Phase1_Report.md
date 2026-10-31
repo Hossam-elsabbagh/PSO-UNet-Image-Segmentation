@@ -5,7 +5,7 @@
 **Instructor:** Assoc. Prof. Mohamed Maher Ata
 
 **Prepared:** 31 October 2026
-**Status:** Implementation draft. Experimental entries must be populated only from completed runs.
+**Status:** Phase 1 experiment completed; report draft for student review.
 
 > **Source and submission note.** The course file `NIC_Project8_PSO_UNet_Arabic_English.pdf` was not present in the supplied project workspace. This draft follows the attached project brief and the cited primary literature. The student team must compare the document against the official course handout, verify every claim and result, revise the prose in their own voice, and check the course rules for AI-assisted work before submission.
 
@@ -45,7 +45,7 @@ Parkhi and colleagues [3] introduced the pet dataset for fine-grained breed reco
 | Saifullah & Dreżewski (2024) [4] | Brain-tumor MRI segmentation with modified U-Net and PSO before training. | Tunes learning rate and dropout; publisher abstract reports up to +4 percentage points Dice and +2 Jaccard in its comparisons. | Medical domain and different protocol; supports the tuning hypothesis only. Full chapter is subscription content. |
 | Saifullah & Dreżewski (2025) [5] | Multimodal brain-tumor segmentation with PSO-UNet. | Tunes filter count, kernel size, and learning rate; arXiv abstract reports Dice 0.9578 and 0.9523 on BraTS 2021 and Figshare. | Different search space, architecture, data, and compute; no score transfer to pets. |
 
-The literature provides architecture and search precedents. The present work tests a more constrained search over learning rate, bottleneck dropout, and weight decay. The strongest inferential risk is treating validation improvements found by search as evidence of generalization without a final held-out test comparison and repeat seeds.
+The literature provides architecture and search precedents. The present work tests a more constrained search over learning rate, bottleneck dropout, and weight decay. A held-out test comparison checks whether the selected validation advantage persists in this run; repeat seeds are still needed to estimate its reliability.
 
 ## 5. Selected NIC Algorithms
 
@@ -118,25 +118,34 @@ The selected baseline is the compact U-Net described above with AdamW, learning 
 
 The PSO pilot itself trains each candidate for two epochs and uses validation Dice only as a search signal. It must not be put into a comparison table against the eight-epoch baseline as if both were final trained models.
 
-## 10. Initial Experimental Results
+## 10. Experimental Results
 
-The following table is populated only by completed run artifacts. A missing value is **pending**, not a zero score. Runtime values refer to elapsed wall-clock measurements; PSO search time is additional to final-model training time. The preliminary row used **64 seeded training and 32 seeded validation images for one epoch** and is not comparable to the required full baseline or PSO final model. See `reports/RUN_STATUS.md` for verified outcomes and blockers.
+The following table uses completed run artifacts only. Each validation row summarizes the best checkpoint chosen across eight epochs; each test row evaluates that fixed checkpoint on all 3,669 official held-out images. Training times are wall-clock measurements repeated in the test rows for context; PSO search time is additional to final-model training time. Exploratory subset runs are excluded because they used different sample counts and training budgets.
 
 | Model | Split | Completed epochs | Mean Dice | Mean foreground IoU | Training time | Search time |
 |---|---|---:|---:|---:|---:|---:|
-| Preliminary subset U-Net | Validation subset (32) | 1 | 0.5150 | 0.3681 | 9.06 s | Not applicable |
-| Fixed baseline U-Net | Validation | Pending | Pending | Pending | Pending | Not applicable |
-| PSO-selected final U-Net | Validation | Pending | Pending | Pending | Pending | Pending |
-| Fixed baseline U-Net | Held-out test | Pending | Pending | Pending | Report with run | Not applicable |
-| PSO-selected final U-Net | Held-out test | Pending | Pending | Pending | Report with run | Report with run |
+| Fixed baseline U-Net | Validation | 8 | 0.8017 | 0.6946 | 1,618.93 s | Not applicable |
+| PSO-selected final U-Net | Validation | 8 | 0.8516 | 0.7667 | 1,766.50 s | 2,441.94 s |
+| Fixed baseline U-Net | Held-out test | 8 | 0.8084 | 0.7071 | 1,618.93 s | Not applicable |
+| PSO-selected final U-Net | Held-out test | 8 | 0.8547 | 0.7733 | 1,766.50 s | 2,441.94 s |
 
-The preliminary run recorded training loss `0.6679` and validation loss `0.6503` in `results/preliminary_history.csv`. In the displayed validation examples, the one-epoch model predicts nearly every pixel as foreground. Its nonzero Dice reflects foreground overlap, not useful boundary delineation. This observation underscores why the small subset check is only a pipeline verification and cannot answer the research question.
+The full baseline completed all eight epochs on the 2,944-image training and 736-image validation splits. Its best checkpoint was selected at epoch 7 with mean validation Dice `0.8017`, mean foreground IoU `0.6946`, and validation loss `0.2788`. Epoch 8's validation Dice declined to `0.7885` while validation loss rose to `0.3001`, supporting the predefined best-validation-checkpoint rule. The saved checkpoint hash and completed-run metadata were verified before the PSO search began. These are validation measurements, not held-out test results.
 
-![Figure 6. Preliminary subset validation images, ground truth, valid pixels, and one-epoch predictions.](../figures/predictions/preliminary_validation.png)
+The configured PSO pilot completed all six two-epoch candidate evaluations in `2,441.94` seconds. Its best short-run validation Dice was `0.7092`, first reached at evaluation 2. The selected vector was learning rate `0.001071759`, bottleneck dropout `0.0282532`, and weight decay `0.000845020`. Evaluation 5 repeated the best vector, and no later candidate improved the best short-run score. These candidate scores are search fitness, not final-model outcomes.
 
-The full analysis should inspect loss and validation-Dice curves for training instability or overfitting, compare the selected validation checkpoints, then evaluate each final model once on the held-out test split. If PSO improves validation Dice but not test Dice, that would indicate selection noise or overfitting to validation, especially with six evaluations and one seed. If PSO improves test Dice, the magnitude must be interpreted with its search cost and run-to-run variance. These are interpretation rules, not observed findings.
+The fresh PSO-selected model completed eight epochs in `1,766.50` seconds and selected epoch 8, with mean validation Dice `0.8516`, mean foreground IoU `0.7667`, and validation loss `0.2160`. Relative to the baseline's best validation checkpoint, these are gains of `0.0498` Dice and `0.0721` IoU. These validation scores were used for model selection and are therefore followed by the independent test comparison.
 
-**Limitations and next steps.** The pilot's three particles and two rounds search only a small portion of the space; two-epoch fitness may poorly rank eight-epoch outcomes. A single seed does not measure uncertainty. The 128-pixel input may lose fine fur boundaries. Subsequent work should complete both final training runs, evaluate test data only after selection, repeat across seeds, report mean and spread, inspect qualitative failures, and compare quality gain per unit search time.
+![Figure 6. Baseline validation images, ground truth, valid pixels, and predictions from the selected checkpoint.](../figures/predictions/baseline_validation.png)
+
+![Figure 7. Six PSO candidate validation scores and the running best.](../figures/training_curves/pso_convergence.png)
+
+The held-out test result supports a gain for the PSO-selected settings in this run: mean Dice increased by `0.0462` (4.62 percentage points) and mean foreground IoU by `0.0662` (6.62 percentage points). Both models were scored on the same 3,669 test images with the same threshold and metric policy. Test Dice was slightly above each model's selected validation Dice, so this result does not show a validation-only gain. The PSO search and final training together took `4,208.44` seconds, `2.60` times the baseline's `1,618.93` seconds; the search itself accounted for `2,441.94` seconds. Thus the measured quality gain incurred a substantial extra compute cost.
+
+![Figure 8. Held-out test Dice and foreground IoU for the two finalized checkpoints.](../figures/training_curves/comparison_test.png)
+
+The example masks show recognizable pet bodies, but some predictions extend into nearby background and miss thin details such as tails or legs. The score averages do not capture every boundary defect. The pilot searched only three particles across two rounds, and evaluation 5 repeated evaluation 2's vector; two-epoch fitness can rank eight-epoch settings imperfectly. A single seed cannot establish a reliable improvement distribution or statistical significance. Future work should repeat the full protocol across seeds, report mean and spread, consider higher image resolution for fine boundaries, and evaluate whether the additional search time is justified by the task's accuracy needs. The official course handout still needs student review against this draft.
+
+![Figure 9. PSO-selected model test examples with original images, ground truth, valid-pixel masks, and predictions.](../figures/predictions/pso_test.png)
 
 **AI-assistance disclosure draft for student review:** “An AI coding assistant helped draft implementation code, tests, diagrams, notebook text, and this report. The student authors reviewed the code, verified cited sources and executed results, corrected errors, and take responsibility for the submitted work.” This text is a suggested disclosure only. The team must adapt it to its actual contribution and the official course academic-integrity policy.
 

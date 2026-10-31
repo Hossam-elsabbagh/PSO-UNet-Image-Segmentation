@@ -83,7 +83,9 @@ python -m scripts.train_baseline
 
 The full command uses `config.json`: batch size 16, AdamW, learning rate 0.001, weight decay 0.0001, dropout 0.10, and 8 epochs. `--smoke` runs a synthetic-data integration check without downloading Oxford-IIIT Pet or producing production result files; it must not be reported as a full baseline. `--no-download` reuses existing dataset files for a full run. Best weights are local only (`checkpoints/baseline_best.pt`). Training and validation history is written only when full training occurs.
 
-For a clearly labeled initial Oxford data check on a CPU, `python -m scripts.preliminary_subset --no-download` trains one epoch on 64 seeded training images and evaluates 32 seeded validation images drawn across the fixed splits. Its measured artifacts are saved separately as `preliminary_*`; they are not the eight-epoch baseline or a comparison with PSO.
+The repository includes the completed Phase 1 test metadata. To start a **new independent experiment**, use a separate project copy, preserve its `results/experiment_metadata.json` as an archive, then remove that copy's active metadata file before training. The guard prevents a rerun from silently replacing a finalized test protocol; regenerate all final result artifacts after the new run.
+
+For an optional exploratory Oxford data check on a CPU, `python -m scripts.preliminary_subset --no-download` runs a small seeded subset experiment. Its measured artifacts are saved separately as `preliminary_*` and are excluded from the eight-epoch baseline-versus-PSO comparison. The latest local exploratory rerun used 128 training and 64 validation images for two epochs.
 
 ## PSO Experiments
 
@@ -91,7 +93,7 @@ For a clearly labeled initial Oxford data check on a CPU, `python -m scripts.pre
 python -m scripts.run_pso
 ```
 
-The pilot performs up to six candidate evaluations before retraining its final model. Candidate runs are computationally expensive even though each has only two epochs. `--smoke` is a synthetic-data integration check that writes no production results. The full run stores search history, selected parameters, final model history, and a local best checkpoint if it completes.
+The configured pilot performs six candidate evaluations before retraining its final model. Candidate runs are computationally expensive even though each has only two epochs. `--smoke` is a synthetic-data integration check that writes no production results. The completed full run stored search history, selected parameters, final model history, and a local best checkpoint.
 
 ## Evaluation
 
@@ -104,11 +106,13 @@ Dice and foreground IoU are computed per image over valid pixels, then averaged 
 
 ## Google Colab Instructions
 
-Open [`notebooks/phase1.ipynb`](notebooks/phase1.ipynb) in Colab after the repository is available on GitHub. Select a GPU runtime if desired and run cells in order. The notebook clones this repository, installs dependencies, detects CUDA or CPU, and calls the same project modules. Its toggles control a smoke check, the full baseline, the optional PSO pilot, and final evaluation. Google Colab storage is temporary; download or copy result artifacts before ending the session.
+Open [`notebooks/phase1.ipynb`](notebooks/phase1.ipynb) in Colab after the repository is available on GitHub. Select a GPU runtime if desired and run cells in order. The notebook clones this repository, installs dependencies, detects CUDA or CPU, and calls the same project modules. Its training toggle defaults to off so the committed results can be inspected without replacing them. For a fresh Colab experiment, first follow the separate-copy metadata step above, then enable baseline, PSO, and final evaluation in order. Google Colab storage is temporary; download or copy new result artifacts before ending the session.
 
 ## Experimental Results
 
-A preliminary **one-epoch Oxford subset** run on 64 seeded training and 32 seeded validation images measured validation Dice **0.5150**, foreground IoU **0.3681**, training loss **0.6679**, validation loss **0.6503**, and **9.06 seconds** of training on CPU. Its example predictions are mostly all foreground, so these numbers verify execution rather than useful segmentation. The eight-epoch baseline, six-evaluation PSO pilot, final PSO model, and held-out test comparison are pending. Measured subset history and figures are under `results/` and `figures/`; see [`reports/RUN_STATUS.md`](reports/RUN_STATUS.md) for evidence. Checkpoint binaries and raw data are intentionally absent from the public repository.
+Both final models completed eight epochs on the fixed Oxford-IIIT Pet splits. The baseline selected epoch 7; the PSO model selected epoch 8 after six two-epoch candidate evaluations. On all 3,669 official held-out test images, the baseline achieved **0.8084 Dice / 0.7071 foreground IoU**, while the PSO-selected model achieved **0.8547 Dice / 0.7733 foreground IoU**. The PSO model gained **0.0462 Dice** and **0.0662 IoU** in this single-seed run. Its search took **2,441.94 s**, final training **1,766.50 s**, and combined path **2.60 times** the baseline's **1,618.93 s** training time.
+
+The selected PSO settings were learning rate `0.001071759`, bottleneck dropout `0.0282532`, and weight decay `0.000845020`. The full four-row comparison is in [`results/results.csv`](results/results.csv); exact metadata, histories, plots, and example masks are under `results/` and `figures/`. See [`reports/RUN_STATUS.md`](reports/RUN_STATUS.md) for verification and limitations. Checkpoint binaries and raw data are intentionally absent from the public repository.
 
 ## Reproducibility
 
@@ -120,11 +124,11 @@ The [technical report draft](reports/Phase1_Report.md) follows the ten required 
 
 ## Project Status
 
-This README describes the implementation protocol. Actual download, test, experiment, CI, and push status are tracked in [`reports/RUN_STATUS.md`](reports/RUN_STATUS.md). A passing local test does not mean the GitHub workflow or the full training experiment has passed.
+This README describes the implementation protocol and completed experiment. Download, test, CI, and push verification are tracked in [`reports/RUN_STATUS.md`](reports/RUN_STATUS.md).
 
 ## Future Work
 
-Run the complete baseline and PSO pilot on GPU if local compute is insufficient; evaluate both final checkpoints once on the held-out test set; repeat with multiple seeds to measure search and training variance; and compare search cost against segmentation improvement.
+Repeat the complete protocol across multiple seeds to measure run-to-run variation, test higher image resolution for fine boundaries, and decide whether the measured accuracy gain justifies the PSO search cost for the intended use.
 
 ## References
 

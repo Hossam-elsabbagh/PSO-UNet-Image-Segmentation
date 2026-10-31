@@ -237,9 +237,13 @@ def parse_markdown(source: str) -> list:
             i += 1
             continue
         if line.startswith("## "):
-            story.append(Paragraph(inline_markup(line[3:]), styles["h2"]))
+            heading = Paragraph(inline_markup(line[3:]), styles["h2"])
             if line.startswith("## 7. "):
-                story.extend(diagrams())
+                section_diagrams = diagrams()
+                story.append(KeepTogether([heading, section_diagrams[0]]))
+                story.extend(section_diagrams[1:])
+            else:
+                story.append(heading)
             i += 1
             continue
         if line.startswith("```"):

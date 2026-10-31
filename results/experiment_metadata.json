@@ -1,6 +1,84 @@
 {
+  "baseline": {
+    "checkpoint_sha256": "4cdee1869abb8e40bd3f9e1af526672974be9289c1ef28a4f01b709c9b6aeaf3",
+    "config": {
+      "dataset": {
+        "batch_size": 16,
+        "image_size": 128,
+        "name": "Oxford-IIIT Pet",
+        "root": "data/raw",
+        "validation_ratio": 0.2
+      },
+      "model": {
+        "bottleneck_channels": 256,
+        "dropout": 0.1,
+        "encoder_channels": [
+          16,
+          32,
+          64,
+          128
+        ],
+        "input_channels": 3,
+        "name": "CompactUNet",
+        "output_channels": 1
+      },
+      "project": {
+        "name": "PSO-UNet-Image-Segmentation",
+        "phase": 1,
+        "seed": 42
+      },
+      "pso": {
+        "candidate_epochs": 2,
+        "cognitive": 1.5,
+        "dropout_bounds": [
+          0.0,
+          0.3
+        ],
+        "enabled": true,
+        "evaluation_rounds": 2,
+        "inertia": 0.7,
+        "learning_rate_bounds": [
+          0.0001,
+          0.003
+        ],
+        "particles": 3,
+        "social": 1.5,
+        "weight_decay_bounds": [
+          1e-06,
+          0.001
+        ]
+      },
+      "training": {
+        "bce_weight": 0.5,
+        "device": "auto",
+        "dice_weight": 0.5,
+        "epochs": 8,
+        "learning_rate": 0.001,
+        "optimizer": "AdamW",
+        "prediction_threshold": 0.5,
+        "weight_decay": 0.0001
+      }
+    },
+    "dataset": "Oxford-IIIT Pet official trainval split",
+    "device": "cpu",
+    "python": "3.11.9",
+    "run_id": "85d9e6758f5f45a1b813d73b75614ed7",
+    "seed": 42,
+    "split": "validation",
+    "summary": {
+      "best_epoch": 7,
+      "best_validation_dice": 0.8017228846244432,
+      "best_validation_iou": 0.6946407035613399,
+      "best_validation_loss": 0.27882054642490717,
+      "checkpoint_path": "D:\\University\\Year 4\\NIC\\checkpoints\\baseline_best.pt",
+      "completed_epochs": 8,
+      "training_seconds": 1618.9278642002027
+    },
+    "timestamp_utc": "2026-10-31T08:07:10.210923+00:00",
+    "torch": "2.5.1+cpu"
+  },
   "preliminary_subset": {
-    "checkpoint_sha256": "8b50452a13346e4bee056de7ba9bfdeca58b3010e86a795f8c585189d13091bf",
+    "checkpoint_sha256": "a7f34ff958425652065992dc0feaecf182828bdfba7c0be6678e9b03350b20f0",
     "config": {
       "dataset": {
         "batch_size": 16,
@@ -65,14 +143,14 @@
     "seed": 42,
     "summary": {
       "best_epoch": 1,
-      "best_validation_dice": 0.5150169435103835,
-      "best_validation_iou": 0.36812809329509355,
-      "best_validation_loss": 0.6503212451934814,
+      "best_validation_dice": 0.2981615371715417,
+      "best_validation_iou": 0.20224737376804117,
+      "best_validation_loss": 0.6611915826797485,
       "checkpoint_path": "D:\\University\\Year 4\\NIC\\checkpoints\\preliminary_best.pt",
-      "completed_epochs": 1,
-      "training_seconds": 9.057769000064582
+      "completed_epochs": 2,
+      "training_seconds": 32.989408100023866
     },
-    "timestamp_utc": "2026-10-30T20:52:56.793844+00:00",
+    "timestamp_utc": "2026-10-31T07:39:46.692451+00:00",
     "torch": "2.5.1+cpu",
     "train_ids": [
       "great_pyrenees_123",
@@ -138,9 +216,73 @@
       "scottish_terrier_170",
       "shiba_inu_111",
       "american_pit_bull_terrier_175",
-      "yorkshire_terrier_149"
+      "yorkshire_terrier_149",
+      "staffordshire_bull_terrier_188",
+      "american_pit_bull_terrier_123",
+      "Bengal_100",
+      "newfoundland_103",
+      "havanese_181",
+      "havanese_124",
+      "Ragdoll_150",
+      "german_shorthaired_135",
+      "Russian_Blue_13",
+      "leonberger_139",
+      "american_bulldog_103",
+      "beagle_105",
+      "havanese_161",
+      "Bombay_121",
+      "scottish_terrier_142",
+      "miniature_pinscher_120",
+      "Ragdoll_126",
+      "beagle_158",
+      "keeshond_160",
+      "Egyptian_Mau_133",
+      "american_bulldog_187",
+      "Egyptian_Mau_146",
+      "basset_hound_147",
+      "miniature_pinscher_146",
+      "havanese_147",
+      "shiba_inu_171",
+      "leonberger_17",
+      "Abyssinian_108",
+      "Birman_12",
+      "leonberger_151",
+      "english_cocker_spaniel_171",
+      "Ragdoll_132",
+      "newfoundland_130",
+      "Ragdoll_137",
+      "pug_134",
+      "Maine_Coon_137",
+      "beagle_192",
+      "Bombay_170",
+      "Bombay_105",
+      "Russian_Blue_103",
+      "shiba_inu_163",
+      "British_Shorthair_134",
+      "american_bulldog_13",
+      "chihuahua_160",
+      "samoyed_180",
+      "miniature_pinscher_144",
+      "american_pit_bull_terrier_149",
+      "Russian_Blue_177",
+      "Russian_Blue_129",
+      "boxer_131",
+      "chihuahua_152",
+      "Persian_173",
+      "beagle_121",
+      "Maine_Coon_191",
+      "yorkshire_terrier_102",
+      "chihuahua_157",
+      "Persian_191",
+      "shiba_inu_112",
+      "basset_hound_124",
+      "newfoundland_112",
+      "leonberger_176",
+      "saint_bernard_118",
+      "american_pit_bull_terrier_163",
+      "havanese_127"
     ],
-    "train_samples": 64,
+    "train_samples": 128,
     "validation_ids": [
       "basset_hound_105",
       "Sphynx_155",
@@ -173,8 +315,239 @@
       "Birman_184",
       "leonberger_119",
       "wheaten_terrier_148",
-      "saint_bernard_132"
+      "saint_bernard_132",
+      "wheaten_terrier_163",
+      "havanese_130",
+      "samoyed_138",
+      "British_Shorthair_177",
+      "Ragdoll_176",
+      "scottish_terrier_182",
+      "saint_bernard_166",
+      "samoyed_176",
+      "boxer_115",
+      "havanese_129",
+      "pomeranian_132",
+      "staffordshire_bull_terrier_1",
+      "Siamese_125",
+      "staffordshire_bull_terrier_18",
+      "beagle_154",
+      "Bombay_16",
+      "Bombay_110",
+      "miniature_pinscher_130",
+      "newfoundland_102",
+      "Sphynx_153",
+      "german_shorthaired_162",
+      "yorkshire_terrier_12",
+      "staffordshire_bull_terrier_136",
+      "Abyssinian_174",
+      "samoyed_131",
+      "keeshond_183",
+      "english_cocker_spaniel_145",
+      "Birman_189",
+      "Egyptian_Mau_187",
+      "basset_hound_161",
+      "Ragdoll_136",
+      "Abyssinian_139"
     ],
-    "validation_samples": 32
+    "validation_samples": 64
+  },
+  "prior_runs": [
+    {
+      "active_run": {
+        "run_id": "d33cf0419d9141d78e1c70895b019a4f",
+        "section": "baseline",
+        "started_utc": "2026-10-31T07:24:16.763661+00:00"
+      }
+    },
+    {
+      "active_run": {
+        "run_id": "ed4ce7b6b56f472d927deb0482225862",
+        "section": "pso",
+        "started_utc": "2026-10-31T08:07:44.075295+00:00"
+      }
+    }
+  ],
+  "pso_final": {
+    "checkpoint_sha256": "ccf15ec89e92050c9b7579c60e24a3926a5ad1a66ea80412c4a148cfb3975dbc",
+    "config": {
+      "dataset": {
+        "batch_size": 16,
+        "image_size": 128,
+        "name": "Oxford-IIIT Pet",
+        "root": "data/raw",
+        "validation_ratio": 0.2
+      },
+      "model": {
+        "bottleneck_channels": 256,
+        "dropout": 0.1,
+        "encoder_channels": [
+          16,
+          32,
+          64,
+          128
+        ],
+        "input_channels": 3,
+        "name": "CompactUNet",
+        "output_channels": 1
+      },
+      "project": {
+        "name": "PSO-UNet-Image-Segmentation",
+        "phase": 1,
+        "seed": 42
+      },
+      "pso": {
+        "candidate_epochs": 2,
+        "cognitive": 1.5,
+        "dropout_bounds": [
+          0.0,
+          0.3
+        ],
+        "enabled": true,
+        "evaluation_rounds": 2,
+        "inertia": 0.7,
+        "learning_rate_bounds": [
+          0.0001,
+          0.003
+        ],
+        "particles": 3,
+        "social": 1.5,
+        "weight_decay_bounds": [
+          1e-06,
+          0.001
+        ]
+      },
+      "training": {
+        "bce_weight": 0.5,
+        "device": "auto",
+        "dice_weight": 0.5,
+        "epochs": 8,
+        "learning_rate": 0.001,
+        "optimizer": "AdamW",
+        "prediction_threshold": 0.5,
+        "weight_decay": 0.0001
+      }
+    },
+    "device": "cpu",
+    "python": "3.11.9",
+    "run_id": "e3c90bf572b040dc893fd0b2d56a0aaf",
+    "seed": 42,
+    "selected_hyperparameters": {
+      "dropout": 0.02825320436629486,
+      "learning_rate": 0.0010717589973807434,
+      "weight_decay": 0.0008450201302139068
+    },
+    "split": "validation",
+    "summary": {
+      "best_epoch": 8,
+      "best_validation_dice": 0.8515598189703413,
+      "best_validation_iou": 0.7667070670181737,
+      "best_validation_loss": 0.2159940982642381,
+      "checkpoint_path": "D:\\University\\Year 4\\NIC\\checkpoints\\pso_best.pt",
+      "completed_epochs": 8,
+      "training_seconds": 1766.4992440999486
+    },
+    "timestamp_utc": "2026-10-31T09:27:39.283036+00:00",
+    "torch": "2.5.1+cpu"
+  },
+  "pso_search": {
+    "best_candidate_validation_dice": 0.709223732378271,
+    "best_parameters": {
+      "dropout": 0.02825320436629486,
+      "learning_rate": 0.0010717589973807434,
+      "weight_decay": 0.0008450201302139068
+    },
+    "candidate_epochs": 2,
+    "config": {
+      "dataset": {
+        "batch_size": 16,
+        "image_size": 128,
+        "name": "Oxford-IIIT Pet",
+        "root": "data/raw",
+        "validation_ratio": 0.2
+      },
+      "model": {
+        "bottleneck_channels": 256,
+        "dropout": 0.1,
+        "encoder_channels": [
+          16,
+          32,
+          64,
+          128
+        ],
+        "input_channels": 3,
+        "name": "CompactUNet",
+        "output_channels": 1
+      },
+      "project": {
+        "name": "PSO-UNet-Image-Segmentation",
+        "phase": 1,
+        "seed": 42
+      },
+      "pso": {
+        "candidate_epochs": 2,
+        "cognitive": 1.5,
+        "dropout_bounds": [
+          0.0,
+          0.3
+        ],
+        "enabled": true,
+        "evaluation_rounds": 2,
+        "inertia": 0.7,
+        "learning_rate_bounds": [
+          0.0001,
+          0.003
+        ],
+        "particles": 3,
+        "social": 1.5,
+        "weight_decay_bounds": [
+          1e-06,
+          0.001
+        ]
+      },
+      "training": {
+        "bce_weight": 0.5,
+        "device": "auto",
+        "dice_weight": 0.5,
+        "epochs": 8,
+        "learning_rate": 0.001,
+        "optimizer": "AdamW",
+        "prediction_threshold": 0.5,
+        "weight_decay": 0.0001
+      }
+    },
+    "device": "cpu",
+    "evaluations": 6,
+    "python": "3.11.9",
+    "run_id": "e3c90bf572b040dc893fd0b2d56a0aaf",
+    "search_seconds": 2441.936726800166,
+    "seed": 42,
+    "timestamp_utc": "2026-10-31T08:58:09.483259+00:00",
+    "torch": "2.5.1+cpu"
+  },
+  "test": {
+    "device": "cpu",
+    "models": {
+      "baseline": {
+        "batches": 230,
+        "dice": 0.8084351644341228,
+        "iou": 0.7070845935656682,
+        "loss": 0.271208482823147,
+        "skipped_batches": 0,
+        "valid_images": 3669
+      },
+      "pso": {
+        "batches": 230,
+        "dice": 0.854658847374264,
+        "iou": 0.7733282165489318,
+        "loss": 0.2123984444625503,
+        "skipped_batches": 0,
+        "valid_images": 3669
+      }
+    },
+    "python": "3.11.9",
+    "seed": 42,
+    "split": "official held-out test",
+    "timestamp_utc": "2026-10-31T09:34:32.977575+00:00",
+    "torch": "2.5.1+cpu"
   }
 }
