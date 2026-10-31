@@ -4,7 +4,7 @@
 
 **Instructor:** Assoc. Prof. Mohamed Maher Ata
 
-**Prepared:** 30 October 2026
+**Prepared:** 31 October 2026
 **Status:** Implementation draft. Experimental entries must be populated only from completed runs.
 
 > **Source and submission note.** The course file `NIC_Project8_PSO_UNet_Arabic_English.pdf` was not present in the supplied project workspace. This draft follows the attached project brief and the cited primary literature. The student team must compare the document against the official course handout, verify every claim and result, revise the prose in their own voice, and check the course rules for AI-assisted work before submission.
@@ -96,7 +96,7 @@ The editable diagrams are [`overall_pipeline.mmd`](../figures/architecture/overa
 
 The codebase separates configuration, dataset and preprocessing, U-Net, losses, metrics, common training and evaluation, PSO, visualization, and command-line scripts. `config.json` contains the selected Phase 1 defaults. `python -m scripts.prepare_dataset` prepares local data and split files; `python -m scripts.train_baseline` runs the fixed training protocol; `python -m scripts.run_pso` performs the pilot and final retraining; `python -m scripts.evaluate_models` requires both finalized checkpoints before opening the held-out test split; and `python -m scripts.generate_results` prepares measured result views. The Colab notebook calls these shared entry points rather than maintaining a second training implementation.
 
-The CPU test suite uses synthetic images and masks so ordinary CI does not download the roughly 800 MB dataset or run a full experiment. Tests cover trimap conversion, deterministic splits, model shape and gradients, ignored-pixel loss behavior, empty-valid batches, metric corner cases, PSO bounds and best updates, protocol guards, and a small training integration loop. **Forty local pytest tests passed** on Python 3.11.9 with PyTorch 2.5.1+cpu. The GitHub Actions workflow targets Python 3.11 on a CPU runner; its outcome remains unverified until a remote run completes. A synthetic baseline smoke run and synthetic PSO integration run each completed one small epoch, without being counted as Oxford results.
+The CPU test suite uses synthetic images and masks so ordinary CI does not download the roughly 800 MB dataset or run a full experiment. Tests cover trimap conversion, deterministic splits, model shape and gradients, ignored-pixel loss behavior, empty-valid batches, metric corner cases, PSO bounds and best updates, protocol guards, and a small training integration loop. **Forty local pytest tests passed** on Python 3.11.9 with PyTorch 2.5.1+cpu. The Python 3.11 CPU [GitHub Actions run](https://github.com/Hossam-elsabbagh/PSO-UNet-Image-Segmentation/actions/runs/41126969467) for the initial implementation commit completed successfully, including the dependency-install and synthetic-test steps. A synthetic baseline smoke run and synthetic PSO integration run each completed one small epoch, without being counted as Oxford results.
 
 Reproducibility depends on fixed split IDs, a recorded seed, the executed configuration, compute device, completed epoch count, runtime, and saved history. Checkpoints and downloaded data remain local; histories, small figures, and metadata can be committed if real and reasonably sized. The missing course PDF remains a documentation blocker pending student review.
 
