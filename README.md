@@ -106,7 +106,7 @@ Dice and foreground IoU are computed per image over valid pixels, then averaged 
 
 ## Google Colab Instructions
 
-Open [`notebooks/phase1.ipynb`](notebooks/phase1.ipynb) in Colab after the repository is available on GitHub. Select a GPU runtime if desired and run cells in order. The notebook clones this repository, installs dependencies, detects CUDA or CPU, and calls the same project modules. Its training toggle defaults to off so the committed results can be inspected without replacing them. For a fresh Colab experiment, first follow the separate-copy metadata step above, then enable baseline, PSO, and final evaluation in order. Google Colab storage is temporary; download or copy new result artifacts before ending the session.
+Open [`notebooks/phase1.ipynb`](notebooks/phase1.ipynb) in Colab or VS Code and run cells in order. In a local checkout, the notebook finds the project root even when Jupyter starts inside `notebooks/` and reuses prepared data. In a fresh Colab runtime, it clones the repository and uses the checksum-verified mirror for missing data. The training toggle defaults to off so committed results can be inspected without replacing them. Those displayed tables are archived results until a new experiment is run. For a fresh Colab experiment, follow the separate-copy metadata step above, then enable baseline, PSO, and final evaluation in order. Colab storage is temporary; download or copy new result artifacts before ending the session.
 
 ## Experimental Results
 

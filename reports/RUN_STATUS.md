@@ -39,7 +39,7 @@ The exact measurements are in `results/experiment_metadata.json`, `results/train
 | PSO search | Six candidate history rows and selected vector recorded. |
 | Full PSO final model | Eight history rows, completed metadata, matching search run ID, and checkpoint hash verified. |
 | Held-out evaluation | Both models evaluated on 3,669 images; four measured comparison rows generated. |
-| Notebook | Schema and syntax validated; selected cells executed locally. Full Colab notebook cells were not rerun because the shared CLI experiment was completed locally. |
+| Notebook | Schema and syntax validated. All 21 non-install code cells executed locally with `DATA_READY=True`; the committed baseline, PSO, and test values are displayed as archived results while their rerun toggles remain off. |
 | Report PDF | Regenerated as **8 A4 pages** and visually inspected after the measured conclusions were added. |
 | GitHub Actions | CPU test workflow runs on push; check the latest commit's workflow result in GitHub Actions. |
 

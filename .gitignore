@@ -19,4 +19,6 @@ checkpoints/**
 *.log
 *.tmp
 tmp/
+phase1-results.zip
+notebooks/PSO-UNet-Image-Segmentation/
 NIC_Project8_PSO_UNet_Arabic_English.pdf
